@@ -1,48 +1,54 @@
 # RC Gamepad Dongle Configurator
 
-Desktop application for configuring the RC Gamepad Dongle. Supports multiple RC protocols including AETR, TAER, and SBUS.
+![RC Gamepad Configurator](assets/logo.png)
 
-## Features
+This is the desktop app that lets you configure your RC Gamepad Dongle. It handles all the channel mapping and protocol settings through a simple interface, so you don't need to mess with code or config files.
 
-- Configure RC protocol mappings
-- Multiple protocol support (AETR, TAER, SBUS, etc.)
-- Serial communication with dongle
-- Save/Load configurations
-- Cross-platform (Windows & Linux)
+## What It Does
 
-## Building
+The configurator connects to your dongle over USB and lets you:
+- Choose which RC protocol you're using (IBUS, PPM, SBUS, etc.)
+- Map your RC channels to specific joystick controls
+- Save your configuration directly to the dongle
+- Load and backup your settings
+
+Works on both Windows and Linux.
+
+## Building the App
 
 ### Windows
 ```powershell
 .\scripts\windows\build-exe.ps1
 ```
-Output: `src\dist\rc-gamepad-dongle.exe`
+This creates an `.exe` file in `src\dist\` that you can run without installing Python.
 
 ### Linux
 ```bash
 ./scripts/linux/build-appimage.sh
 ```
-Output: `build/RC_Gamepad_Dongle-x86_64.AppImage`
+This builds an AppImage in the `build/` folder that runs on most Linux distributions.
 
-## Development
+## Development Setup
+
+Want to modify the configurator or run it from source? Here's what you need:
 
 ### Requirements
-- Python 3.8+
-- PySide6
-- PyInstaller
-- Pillow
+- Python 3.8 or newer
+- PySide6 (Qt for Python)
+- PyInstaller (for building executables)
+- Pillow (image handling)
 
-### Install Dependencies
+### Getting Started
 ```bash
 pip install -r requirements.txt
 ```
 
-### Run from Source
+### Running from Source
 ```bash
 cd src
 python rc-gamepad-dongle.py
 ```
 
-## Documentation
+## More Info
 
-See [scripts/README.md](scripts/README.md) for detailed build instructions.
+Check out [scripts/README.md](scripts/README.md) for more detailed build instructions and troubleshooting tips.

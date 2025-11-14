@@ -1,60 +1,67 @@
 # RC Gamepad Dongle
 
-Arduino-based USB HID adapter that converts RC receiver signals into gamepad inputs. Works with any device that supports USB HID joysticks.
-
 ![RC Gamepad Dongle](configurator/assets/logo.png)
 
-## Overview
+Turn your RC receiver into a USB game controller. This Arduino-based adapter converts RC signals (IBUS, PPM, SBUS, and more) into standard USB HID joystick inputs that work with Windows, Linux, Mac, Android, and any device that recognizes USB game controllers.
 
-This project converts RC receiver output (IBUS, PPM, SBUS, etc.) into USB HID joystick signals. Includes both Arduino firmware and a desktop configurator for channel mapping.
+## What Does It Do?
 
-## Features
+The RC Gamepad Dongle bridges the gap between your RC receiver and your computer. Whether you're using it for flight simulators, robot control, or custom gaming setups, this dongle translates your RC radio signals into joystick inputs that any software can understand.
 
-- USB HID joystick (6 axes, 32 buttons, 2 hat switches)
-- Multiple RC protocols: IBUS, PPM, SBUS, CRSF, DSMX, DSM2, FPORT
-- Configurable channel mapping
-- Arduino Pro Micro based
-- Cross-platform configurator (Windows, Linux)
+The project includes Arduino firmware for the dongle itself and a desktop configurator app that makes setup straightforward.
 
-## Hardware
+## Key Features
 
-### Components
+- **Full HID Support**: 6 axes, 32 buttons, and 2 hat switches
+- **Multiple RC Protocols**: IBUS, PPM, SBUS, CRSF, DSMX, DSM2, FPORT
+- **Easy Configuration**: Map any RC channel to any joystick control
+- **Simple Hardware**: Based on the affordable Arduino Pro Micro
+- **Cross-Platform**: Works on Windows and Linux
 
-- Arduino Pro Micro (16MHz/5V)
-- 10kΩ resistor (mode select pullup)
-- Toggle switch (config/joystick mode)
-- WS2812 LED (optional, status indicator)
+## Hardware You'll Need
 
-### Wiring
+### Parts List
+
+- **Arduino Pro Micro** (16MHz/5V version)
+- **10kΩ resistor** (for the mode switch)
+- **Toggle switch** (to switch between config and joystick modes)
+- **WS2812 LED** (optional, gives you visual status feedback)
+
+### Building It
+
+You have two options: breadboard or PCB.
 
 ![Breadboard Wiring](hardware/assets/ProMicroImplementation.fzpz_bb.png)
 
-**Pins:**
-- Pin 0 (RX): RC receiver signal
-- Pin 3: Mode switch (HIGH=config, LOW=joystick)
-- Pin 5: WS2812 LED (optional)
-- GND: Ground
-- VCC: 5V power
+**Pin Connections:**
+- **Pin 0 (RX)**: Connect your RC receiver signal here
+- **Pin 3**: Mode switch (HIGH for config mode, LOW for joystick mode)
+    - Connect 10kΩ resistor to ground
+- **Pin 5**: Optional WS2812 LED for status indication
+- **GND**: Ground connection
+- **VCC**: 5V power
 
-### PCB Option
+### Custom PCB
 
-Custom PCB available with hardware inverter for SBUS. Files in `hardware/PCB/`:
-- Gerber files: `Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip`
-- Schematic: `SCH_RC-Gamepad-Dongle V0.1_2025-11-13.pdf`
-- BOM: `BOM_RC-Gamepad-Dongle V0.1_RC-Gamepad-Dongle V0.1_2025-11-13.xlsx`
+If you want a cleaner build, there's a custom PCB design with all the features built in, including a hardware inverter for SBUS receivers. All the files you need are in `hardware/PCB/`:
+- **[Gerber files](hardware/PCB/Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip)**: Ready to send to your PCB manufacturer
+- **[Schematic](hardware/PCB/SCH_RC-Gamepad-Dongle%20V0.1_2025-11-13.pdf)**: Full circuit diagram
+- **[BOM](hardware/PCB/BOM_RC-Gamepad-Dongle%20V0.1_RC-Gamepad-Dongle%20V0.1_2025-11-13.xlsx)**: Complete parts list with quantities
 
-## Quick Start
+## Getting Started
 
-### 1. Flash Firmware
+### Step 1: Flash the Firmware
+
+First, upload the firmware to your Arduino Pro Micro:
 
 ```bash
 cd hardware/
 pio run --target upload
 ```
 
-### 2. Run Configurator
+### Step 2: Run the Configurator
 
-**Windows:** Run the `.exe`
+**Windows:** Just run the `.exe` file
 
 **Linux:**
 ```bash
@@ -62,7 +69,7 @@ chmod +x RC_Gamepad_Configurator-x86_64.AppImage
 ./RC_Gamepad_Configurator-x86_64.AppImage
 ```
 
-**From source:**
+**Or run from source:**
 ```bash
 cd configurator
 python -m venv .venv
@@ -71,33 +78,35 @@ pip install -r requirements.txt
 python src/rc-gamepad-dongle.py
 ```
 
-### 3. Configure
+### Step 3: Configure Your Channels
 
-1. Set pin 3 HIGH (config mode)
-2. Connect via USB
-3. Open configurator
-4. Select RC protocol
-5. Map channels to joystick controls
-6. Save to dongle
-7. Set pin 3 LOW (joystick mode)
+1. Flip your mode switch to config mode (pin 3 HIGH)
+2. Plug the dongle into your computer via USB
+3. Open the configurator app
+4. Pick your RC protocol from the dropdown
+5. Map your RC channels to the joystick controls you want
+6. Click save to write the configuration to the dongle
+7. Flip the mode switch back to joystick mode (pin 3 LOW)
 
-## Protocol Support
+That's it! Your dongle is now ready to use as a game controller.
 
-| Protocol | Status | Baud | Notes |
-|----------|--------|------|-------|
-| IBUS | ✅ Tested | 115200 | FlySky receivers |
-| PPM | ✅ Tested | N/A | 8-channel |
-| SBUS | ⚠️ Untested | 100000 | Needs hardware inverter |
-| CRSF | ⚠️ Untested | 420000 | Implemented per spec |
-| DSMX | ⚠️ Untested | 115200 | Spektrum |
-| DSM2 | ⚠️ Untested | 115200 | Spektrum |
-| FPORT | ⚠️ Untested | 115200 | FrSky |
+## Supported RC Protocols
 
-**Note:** Untested protocols are implemented based on specifications. Testing contributions welcome.
+| Protocol | Status | Baud Rate | Notes |
+|----------|--------|-----------|-------|
+| IBUS | ✅ Tested | 115200 | Works great with FlySky receivers |
+| PPM | ✅ Tested | N/A | Standard 8-channel PPM |
+| SBUS | ⚠️ Untested | 100000 | Needs hardware inverter (included in PCB) |
+| CRSF | ⚠️ Untested | 420000 | TBS Crossfire protocol |
+| DSMX | ⚠️ Untested | 115200 | Spektrum DSMX receivers |
+| DSM2 | ⚠️ Untested | 115200 | Spektrum DSM2 receivers |
+| FPORT | ⚠️ Untested | 115200 | FrSky F.Port protocol |
 
-## Building
+**Note:** Protocols marked as untested are implemented according to their specifications but haven't been verified with actual hardware yet. If you test one of these, please let us know how it goes!
 
-### Configurator
+## Building From Source
+
+### Building the Configurator
 
 **Windows:**
 ```powershell
@@ -109,34 +118,18 @@ python src/rc-gamepad-dongle.py
 ./configurator/scripts/linux/build-appimage.sh
 ```
 
-### Firmware
+### Building the Firmware
 
 ```bash
 cd hardware/
-pio run                    # Build
-pio run --target upload    # Flash
-pio device monitor         # Monitor
+pio run                    # Compile the firmware
+pio run --target upload    # Upload to your Arduino
+pio device monitor         # Monitor serial output
 ```
-
-## Project Structure
-
-```
-RC-Gamepad-Dongle/
-├── configurator/          # Desktop GUI app
-│   ├── src/              # Python source
-│   ├── scripts/          # Build scripts
-│   ├── assets/           # Icons
-│   └── requirements.txt  # Dependencies
-└── hardware/             # Arduino firmware
-    ├── src/              # C++ source
-    ├── PCB/              # PCB files
-    └── assets/           # Schematics
-```
-
 ## License
 
-MIT - see [LICENSE](LICENSE)
+This project is released under the MIT License - see [LICENSE](LICENSE) for details.
 
 ## Contributing
 
-Pull requests welcome. Protocol testing especially appreciated for SBUS, CRSF, DSM, and FPORT receivers.
+Want to help improve this project? Pull requests are welcome! I'd especially appreciate help testing the protocols that haven't been verified yet (SBUS, CRSF, DSM, and FPORT). If you have one of these receivers, give it a try and let us know how it works.

@@ -1,204 +1,149 @@
-# RC Gamepad Dongle Firmware
+# RC Gamepad Dongle Hardware
 
-Arduino firmware for the RC Gamepad Configurator project.
+This folder contains the Arduino firmware and hardware documentation for the RC Gamepad Dongle.
 
-## Hardware Assembly
+## Building Your Dongle
 
-### Breadboard Build
-**Components:**
-- Arduino Pro Micro (16MHz/5V)
-- 10kΩ resistor (pullup for mode switch)
-- Toggle switch (mode selection)
-- WS2812 LED (optional, status indication)
+You can build this project two ways: you can solder a frankenstein or build a custom PCB
 
-**Wiring Diagram:**
-See `assets/ProMicroImplementation.fzpz_bb.png` for complete Fritzing diagram.
+### Option 1: Frankenstein Build
 
-### Custom PCB
-**Professional PCB available:**
-- Gerber files: `PCB/Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip`
-- Schematic: `PCB/SCH_RC-Gamepad-Dongle V0.1_2025-11-13.pdf` 
-- BOM: `PCB/BOM_RC-Gamepad-Dongle V0.1_RC-Gamepad-Dongle V0.1_2025-11-13.xlsx`
-- Includes hardware SBUS inverter
+**What You'll Need:**
+- Arduino Pro Micro (16MHz/5V version)
+- 10kΩ resistor (for the mode switch pullup)
+- Toggle switch (SPDT works great)
+- WS2812 LED (optional, but helpful for status feedback)
+- Breadboard and jumper wires / soldering iron and wire
 
-## Pin Configuration
+**Wiring It Up:**
 
-```
-Pin 3  - Mode Select (HIGH=Config, LOW=Joystick)
-Pin 5  - WS2812 LED Data (optional)
-Pin 0  - RX (RC Receiver Data Input) 
-Pin 1  - TX (Not used)
-USB    - Configuration & HID output
-```
+![Wiring Diagram](assets/ProMicroImplementation.fzpz_bb.png)
 
-## Quick Start
+### Option 2: Custom PCB
+
+The custom PCB includes everything you need in a compact package.
+
+![PCB Schematic](PCB/SCH_RC-Gamepad-Dongle%20V0.1_1-P1_2025-11-13.png)
+
+**PCB Features:**
+- Hardware SBUS signal inverter
+- Proper RC connectors for clean wiring
+- Status LED
+
+**Design Files (in `PCB/` folder):**
+- **[Gerber files](PCB/Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip)**: Ready to upload to any PCB manufacturer
+- **[Schematic](PCB/SCH_RC-Gamepad-Dongle%20V0.1_2025-11-13.pdf)**: Complete circuit diagram (PDF format)
+- **[BOM](PCB/BOM_RC-Gamepad-Dongle%20V0.1_RC-Gamepad-Dongle%20V0.1_2025-11-13.xlsx)**: Full parts list with quantities
+- **[DXF file](PCB/DXF_RC-Gamepad-Dongle%20V0.1_2025-11-13_AutoCAD2007.dxf)**: Mechanical dimensions for enclosure design
+
+**Getting PCBs Made:**
+1. Upload the [Gerber ZIP file](PCB/Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip) to your PCB manufacturer (JLCPCB, PCBWay, OSH Park, etc.)
+2. Order the parts from the BOM spreadsheet
+3. Solder the components yourself, or use a PCBA service
+
+## Uploading Firmware
+
+Make sure you have PlatformIO installed, then:
 
 ```bash
 cd hardware/
 pio run --target upload
 ```
 
-## Protocol Support
+## Supported RC Protocols
 
-| Protocol | Status | Baud Rate | Testing |
-|----------|--------|-----------|----------|
-| IBUS     | ✅ Stable | 115200 | ✅ Tested |
-| PPM      | ✅ Stable | N/A | ✅ Tested |
-| CRSF     | ⚠️ Implemented | 420000 | ⚠️ Untested |
-| SBUS     | ⚠️ Implemented | 100000 | ⚠️ Untested |
-| DSMX/DSM2| ⚠️ Implemented | 115200 | ⚠️ Untested |
-| FPORT    | ⚠️ Implemented | 115200 | ⚠️ Untested |
+| Protocol | Status | Baud Rate | Notes |
+|----------|--------|-----------|-------|
+| **IBUS** | ✅ Tested | 115200 | Works great with FlySky receivers |
+| **PPM** | ✅ Tested | N/A | Standard 8-channel PPM |
+| **SBUS** | ⚠️ Untested | 100000 | Needs hardware inverter (included in PCB) |
+| **CRSF** | ⚠️ Untested | 420000 | TBS Crossfire protocol |
+| **DSMX** | ⚠️ Untested | 115200 | Spektrum DSMX |
+| **DSM2** | ⚠️ Untested | 115200 | Spektrum DSM2 |
+| **FPORT** | ⚠️ Untested | 115200 | FrSky F.Port |
 
-**Note**: Only IBUS and PPM have been tested due to hardware availability.
+**Note:** Only IBUS and PPM have been verified with actual hardware. The other protocols are implemented according to their specs but need testing. If you try one, let us know how it goes!
 
-## Supported Controls
-
-### Joystick Axes
-- **X, Y, Z Axes**: Standard 3D movement controls
-- **Rx, Ry, Rz Axes**: Rotational controls around X, Y, Z axes
-
-### Specialized Controls  
-- **Rudder**: Directional control (typically yaw)
-- **Throttle**: Power/speed control
-- **Accelerator**: Forward motion control
-- **Brake**: Stopping/reverse control  
-- **Steering**: Left/right directional control
-
-### Digital Controls
-- **32 Buttons**: Individual on/off switches
-- **2 Hat Switches**: 8-direction digital controls for menus/navigation
-
-All controls can be mapped to any RC channel (1-16) or disabled.
-
-## Build Requirements
-
-- [PlatformIO](https://platformio.org/)
-- Arduino Pro Micro or compatible ATmega32U4 board
-
-## Configuration
-
-Use the GUI configurator application in the parent directory to configure the firmware via serial interface.
-
-## License
-
-MIT License - see main project for details.# Hardware Documentation
-
-## Build Options
-
-### Option 1: Breadboard Build (Beginner-Friendly)
-
-**Required Components:**
-- Arduino Pro Micro (16MHz/5V, SparkFun compatible)
-- 10kΩ resistor (for mode select pullup)
-- Toggle switch (SPDT recommended)
-- WS2812 LED (optional, for status indication)
-- Breadboard and jumper wires
-
-**Assembly Instructions:**
-1. Follow the Fritzing diagram: `hardware/assets/ProMicroImplementation.fzpz_bb.png`
-2. Connect the toggle switch to Pin 3 with 10kΩ pullup resistor
-3. Connect WS2812 LED data pin to Pin 5 (optional)
-4. Connect RC receiver data to Pin 0 (RX)
-5. Ensure proper power connections (VCC/GND)
-
-**Wiring Details:**
-```
-Arduino Pro Micro Connections:
-├── Pin 3: Mode Switch + 10kΩ pullup to VCC
-├── Pin 5: WS2812 LED Data In (optional)
-├── Pin 0: RC Receiver Data (RX)
-├── VCC: +5V power
-└── GND: Ground reference
-```
-
-### Option 2: Custom PCB (Professional)
-
-**PCB Design Files (in `hardware/PCB/`):**
-- `Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip` - Manufacturing files
-- `SCH_RC-Gamepad-Dongle V0.1_2025-11-13.pdf` - Schematic diagram
-- `BOM_RC-Gamepad-Dongle V0.1_RC-Gamepad-Dongle V0.1_2025-11-13.xlsx` - Bill of materials
-- `DXF_RC-Gamepad-Dongle V0.1_2025-11-13_AutoCAD2007.dxf` - Mechanical drawings
-
-**PCB Features:**
-- Integrated Arduino Pro Micro footprint
-- Hardware SBUS signal inverter
-- Professional connectors for RC inputs
-- Dedicated IBUS and SBUS ports
-- Status LED integration
-- Compact form factor
-
-**Manufacturing:**
-1. Upload Gerber files to PCB manufacturer (JLCPCB, PCBWay, etc.)
-2. Use included BOM for component sourcing
-3. Assembly can be done manually or with PCBA service
+**Important:** Only connect one receiver at a time to avoid signal conflicts.
 
 ## RC Protocol Connections
 
-### Tested Protocols
-| Protocol | Connection | Hardware Notes |
-|----------|------------|----------------|
-| **IBUS** | Pin 0 (RX) direct | Standard 3.3V/5V logic levels |
-| **PPM** | Pin 0 (RX) direct | Digital pulse train |
+### For Breadboard Builds
+- **IBUS/PPM/CRSF/DSM/FPORT**: Connect directly to Pin 0 (RX)
+- **SBUS**: Requires a hardware inverter circuit (see PCB design for reference)
 
-### Implemented Protocols (Untested)
-| Protocol | Connection | Hardware Notes |
-|----------|------------|----------------|
-| **SBUS** | PCB SBUS port | Requires hardware inverter (included in PCB) |
-| **CRSF** | Pin 0 (RX) direct | 3.3V logic, may need level shifting |
-| **DSMX/DSM2** | Pin 0 (RX) direct | Standard logic levels |
-| **FPORT** | Pin 0 (RX) direct | Standard logic levels |
+### For PCB Builds
+- **IBUS/PPM/CRSF/DSM/FPORT**: Use the IBUS port
+- **SBUS**: Use the SBUS port
 
-⚠️ **Important**: Only connect ONE receiver at a time to prevent conflicts!
+## Status LED Guide
 
-## Status LED Indicators
+If you added the WS2812 LED, here's what the colors mean:
 
-The WS2812 LED provides visual feedback:
+| Color | Pattern | What It Means |
+|-------|---------|---------------|
+| **Blue** | Solid | Configuration mode is active |
+| **Green** | Solid | Joystick mode, receiving RC data |
+| **Dim Green** | Solid | Joystick mode, waiting for RC data |
+| **Red** | Flashing | Error - check your connections |
+| **Yellow** | Flashing | Saving configuration to memory |
 
-| Color | Pattern | Meaning |
-|-------|---------|---------|
-| **Blue** | Solid | Configuration mode active |
-| **Green** | Solid | Joystick mode, receiving data |
-| **Dim Green** | Solid | Joystick mode, no data |
-| **Red** | Flash | Error condition |
-| **Yellow** | Flash | EEPROM write operation |
+## Joystick Controls
 
-## Power Requirements
+The dongle can emulate a full-featured USB joystick with:
 
-- **Supply Voltage**: 5V via USB or VIN pin
-- **Current Draw**: 
-  - Base: ~50mA (Arduino + LED)
-  - Peak: ~80mA (during USB enumeration)
-- **Power Source**: USB port provides sufficient power
+**Analog Axes:**
+- X, Y, Z axes
+- Rx, Ry, Rz axes
+- Rudder, Throttle, Accelerator, Brake, Steering
 
-## Mechanical Specifications
+**Digital Controls:**
+- 32 individual buttons
+- 2 hat switches (8-direction controls)
 
-- **PCB Dimensions**: See DXF file for exact measurements
-- **Connector Types**: Standard RC servo connectors
-- **Mounting**: Compatible with standard RC electronics mounting
+You can map any RC channel (1-16) to any control, or leave controls unmapped if you don't need them.
 
 ## Troubleshooting
 
-### Hardware Issues
-- **No LED**: Check WS2812 wiring and power
-- **No USB recognition**: Verify Arduino Pro Micro connections
-- **No RC data**: Check receiver binding and connections
+**LED not working?**
+- Check the WS2812 wiring and power connections
+- Make sure the LED data pin is connected to pin 5
 
-### Connection Issues  
-- **SBUS not working**: Ensure hardware inverter is present (PCB only)
-- **Multiple protocols**: Only connect one receiver type at a time
-- **Loose connections**: Use proper connectors or solder joints
+**Computer not recognizing the dongle?**
+- Verify your Arduino Pro Micro is functioning (should show up as a COM port)
+- Try a different USB cable
+- Check that the firmware uploaded successfully
 
-## Files Reference
+**No RC data coming through?**
+- Make sure your receiver is bound to your transmitter
+- Check the protocol setting in the configurator matches your receiver
+- Verify the receiver data wire is connected to pin 0
+- For SBUS on breadboard, you need a hardware inverter
 
-### Fritzing Files (`hardware/assets/`)
-- `ProMicroImplementation.fzpz.fzz` - Editable Fritzing project
-- `ProMicroImplementation.fzpz_bb.png` - Breadboard view
-- `ProMicroImplementation2.fzpz_bb.png` - Alternative view
+**SBUS not working on breadboard?**
+- SBUS uses an inverted signal that needs hardware inversion
+- Use the PCB design which has the inverter built-in, or add an inverter to your breadboard
 
-### PCB Files (`hardware/PCB/`)
-- Gerber files for manufacturing
-- Complete schematic documentation
-- Bill of materials with part numbers
-- Mechanical drawings for enclosure design
+## Files in This Folder
 
-This hardware documentation supports both beginner breadboard builds and professional PCB implementations.
+**Fritzing Diagrams (`assets/` folder):**
+- `ProMicroImplementation.fzpz.fzz` - Editable Fritzing project file
+- `ProMicroImplementation.fzpz_bb.png` - Breadboard wiring diagram
+- `ProMicroImplementation2.fzpz_bb.png` - Alternative wiring view
+
+**PCB Design (`PCB/` folder):**
+- Gerber files for PCB manufacturing
+- Schematic PDF
+- Bill of materials spreadsheet
+- Mechanical DXF drawings
+
+**Firmware (`src/` folder):**
+- `main.cpp` - Arduino firmware source code
+
+## Need Help?
+
+Check the main project README for more information, or open an issue on the GitHub repository if you run into problems.
+
+## License
+
+MIT License - see the main project for details.
