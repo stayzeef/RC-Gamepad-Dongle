@@ -1,6 +1,6 @@
 # RC Gamepad Dongle
 
-![RC Gamepad Dongle](configurator/assets/logo.png)
+![RC Gamepad Dongle](assets/images/logo.png)
 
 Turn your RC receiver into a USB game controller. This Arduino-based adapter converts RC signals (IBUS, PPM, SBUS, and more) into standard USB HID joystick inputs that work with Windows, Linux, Mac, Android, and any device that recognizes USB game controllers.
 
@@ -18,6 +18,24 @@ The project includes Arduino firmware for the dongle itself and a desktop config
 - **Simple Hardware**: Based on the affordable Arduino Pro Micro
 - **Cross-Platform**: Works on Windows and Linux
 
+## Project Structure
+
+```
+RC-Gamepad-Dongle/
+├── assets/              # All project assets
+│   ├── images/          # Screenshots, photos, diagrams
+│   ├── fritzing/        # Fritzing circuit designs  
+│   ├── desktop/         # Desktop application files
+│   └── default.json     # Default configuration file
+├── firmware/            # Arduino firmware (PlatformIO)
+├── software/            # Desktop configurator application
+│   └── configurator/    # Python-based configuration tool
+├── hardware/            # PCB designs and manufacturing files
+│   └── pcb/             # Gerber files, schematics, BOM
+├── docs/                # Project documentation
+└── README.md           # This file
+```
+
 ## Hardware You'll Need
 
 ### Parts List
@@ -29,10 +47,10 @@ The project includes Arduino firmware for the dongle itself and a desktop config
 
 ## Building Your Dongle
 
-You can build this project two ways: you can solder a frankenstein or build a custom PCB
+You can build this project two ways: breadboard prototype or custom PCB.
 
-### Option 1: Frankenstein Build
-![Breadboard Wiring](hardware/assets/ProMicroImplementation.fzpz_bb.png)
+### Option 1: Breadboard Build
+![Breadboard Wiring](assets/images/ProMicroImplementation.fzpz_bb.png)
 
 **Pin Connections:**
 - **Pin 0 (RX)**: Connect your RC receiver signal here
@@ -44,10 +62,16 @@ You can build this project two ways: you can solder a frankenstein or build a cu
 
 ### Option 2: Custom PCB
 
-If you want a cleaner build, there's a custom PCB design with all the features built in, including a hardware inverter for SBUS receivers. All the files you need are in `hardware/PCB/`:
-- **[Gerber files](hardware/PCB/Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip)**: Ready to send to your PCB manufacturer
-- **[Schematic](hardware/PCB/SCH_RC-Gamepad-Dongle%20V0.1_2025-11-13.pdf)**: Full circuit diagram
-- **[BOM](hardware/PCB/BOM_RC-Gamepad-Dongle%20V0.1_RC-Gamepad-Dongle%20V0.1_2025-11-13.xlsx)**: Complete parts list with quantities
+If you want a cleaner build, there's a custom PCB design with all the features built in, including a hardware inverter for SBUS receivers.
+
+![Custom PCB](assets/images/custom-pcb.jpg)
+*The custom PCB provides a compact, professional solution with proper connectors and built-in SBUS inverter*
+
+All the files you need are in `hardware/pcb/`:
+
+- **[Gerber files](hardware/pcb/Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip)**: Ready to send to your PCB manufacturer
+- **[Schematic](hardware/pcb/SCH_RC-Gamepad-Dongle%20V0.1_2025-11-13.pdf)**: Full circuit diagram
+- **[BOM](hardware/pcb/BOM_RC-Gamepad-Dongle%20V0.1_RC-Gamepad-Dongle%20V0.1_2025-11-13.xlsx)**: Complete parts list with quantities
 
 ## Getting Started
 
@@ -56,27 +80,24 @@ If you want a cleaner build, there's a custom PCB design with all the features b
 First, upload the firmware to your Arduino Pro Micro:
 
 ```bash
-cd hardware/
+cd firmware/
 pio run --target upload
 ```
 
 ### Step 2: Run the Configurator
 
-**Windows:** Just run the `.exe` file
+**Pre-built Applications:**
+- **Windows:** Download and run the `.exe` file from releases
+- **Linux:** Download and run the `.AppImage` file from releases
 
-**Linux:**
+**Or build from source:**
 ```bash
-chmod +x RC_Gamepad_Configurator-x86_64.AppImage
-./RC_Gamepad_Configurator-x86_64.AppImage
-```
-
-**Or run from source:**
-```bash
-cd configurator
+cd software/configurator/
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python src/rc-gamepad-dongle.py
+cd src/
+python rc-gamepad-dongle.py
 ```
 
 ### Step 3: Configure Your Channels
@@ -88,6 +109,12 @@ python src/rc-gamepad-dongle.py
 5. Map your RC channels to the joystick controls you want
 6. Click save to write the configuration to the dongle
 7. Flip the mode switch back to joystick mode (pin 3 LOW)
+
+![Configurator General Tab](assets/images/screenshots/configurator-general.png)
+*General configuration tab showing protocol selection and basic settings*
+
+![Configurator Axes Tab](assets/images/screenshots/configurator-axes.png)
+*Axes configuration tab for mapping RC channels to joystick controls*
 
 That's it! Your dongle is now ready to use as a game controller.
 
@@ -111,22 +138,34 @@ That's it! Your dongle is now ready to use as a game controller.
 
 **Windows:**
 ```powershell
-.\configurator\scripts\windows\build-exe.ps1
+cd software/configurator/scripts/windows/
+.\build-exe.ps1
 ```
 
 **Linux:**
 ```bash
-./configurator/scripts/linux/build-appimage.sh
+cd software/configurator/scripts/linux/
+./build-appimage.sh
 ```
 
 ### Building the Firmware
 
 ```bash
-cd hardware/
+cd firmware/
 pio run                    # Compile the firmware
 pio run --target upload    # Upload to your Arduino
 pio device monitor         # Monitor serial output
 ```
+
+## Documentation
+
+For detailed documentation, see the `docs/` directory:
+
+- **[Hardware Guide](hardware/README.md)** - PCB designs, assembly instructions, troubleshooting
+- **[Firmware Guide](firmware/README.md)** - Arduino code, protocol implementation, status LEDs  
+- **[Software Guide](software/README.md)** - Configurator app, building from source
+- **[Complete Documentation](docs/README.md)** - Project overview, setup instructions
+
 ## License
 
 This project is released under the MIT License - see [LICENSE](LICENSE) for details.

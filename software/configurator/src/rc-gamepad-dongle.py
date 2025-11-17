@@ -69,7 +69,10 @@ class ConfiguratorApp(QMainWindow):
             # PyInstaller: bundled as data file (Windows/Linux)
             os.path.join(getattr(sys, '_MEIPASS', ''), 'assets', 'logo_512.png') if getattr(sys, 'frozen', False) else None,
             os.path.join(getattr(sys, '_MEIPASS', ''), 'assets', 'logo.png') if getattr(sys, 'frozen', False) else None,
-            # Development: running from src directory
+            # Development: running from src directory (new structure)
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'assets', 'images', 'logo_512.png'),
+            os.path.join(os.path.dirname(__file__), '..', '..', '..', 'assets', 'images', 'logo.png'),
+            # Old structure (fallback)
             os.path.join(os.path.dirname(__file__), '..', 'assets', 'logo_512.png'),
             os.path.join(os.path.dirname(__file__), '..', 'assets', 'logo.png'),
             # Linux AppImage: absolute path

@@ -1,54 +1,207 @@
-# RC Gamepad Dongle Hardware
+# Hardware Documentation
 
-This folder contains the Arduino firmware and hardware documentation for the RC Gamepad Dongle.
+This directory contains hardware designs and manufacturing files for the RC Gamepad Dongle.
 
-## Building Your Dongle
+## PCB Design
 
-You can build this project two ways: you can solder a frankenstein or build a custom PCB
+The custom PCB provides a complete solution with proper connectors and built-in signal conditioning.
 
-### Option 1: Frankenstein Build
+![Custom PCB](../assets/images/custom-pcb.jpg)
+*Professional PCB design with Arduino Pro Micro socket, RC connectors, and integrated SBUS inverter*
+
+### Features
+- **Arduino Pro Micro socket** - Uses standard Pro Micro pinout
+- **RC input connectors** - Proper 3-pin servo connectors for clean wiring  
+- **Hardware SBUS inverter** - Built-in inverter for SBUS protocol support
+- **Status LED** - Integrated WS2812 RGB LED for visual feedback
+- **Mode switch** - Hardware toggle between config and joystick modes
+- **Compact design** - Fits in standard project enclosures
+
+### Manufacturing Files
+
+All files are located in `pcb/`:
+
+- **`Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip`** - Complete Gerber files ready for PCB manufacturing
+- **`SCH_RC-Gamepad-Dongle V0.1_2025-11-13.pdf`** - Schematic diagram (PDF)
+- **`BOM_RC-Gamepad-Dongle V0.1_RC-Gamepad-Dongle V0.1_2025-11-13.xlsx`** - Bill of Materials with part numbers and quantities
+- **`DXF_RC-Gamepad-Dongle V0.1_2025-11-13_AutoCAD2007.dxf`** - Mechanical dimensions for enclosure design
+
+### PCB Manufacturing
+
+1. Upload the Gerber ZIP file to your preferred PCB manufacturer:
+   - **JLCPCB** - Low cost, good quality
+   - **PCBWay** - Premium options
+   - **OSH Park** - Made in USA, purple boards
+
+2. Recommended settings:
+   - **Layers**: 2
+   - **PCB Thickness**: 1.6mm  
+   - **Surface Finish**: HASL (or ENIG for better quality)
+   - **Copper Weight**: 1oz
+
+3. Order components from the BOM spreadsheet
+
+### Assembly Notes
+
+- **Computer not recognizing the dongle:**
+- Verify your Arduino Pro Micro is functioning (should show up as a COM port)
+- Try a different USB cable
+- Check that the firmware uploaded successfully
+- If bootloader is corrupted, use ICSP programming method above
+
+**Firmware upload fails:**
+- Check that the correct board is selected (SparkFun Pro Micro)
+- Verify the correct processor (ATmega32U4 5V, 16MHz)
+- Try pressing reset button twice quickly before upload
+- If bootloader is missing/corrupted, burn bootloader using ICSP method
+- **Connectors**: Standard 3-pin servo connectors work well
+- **LED**: Any WS2812 or WS2812B works
+- **Switch**: Standard SPDT toggle switch
+
+### Programming the Arduino Pro Micro
+
+The custom PCB includes an ICSP (In-Circuit Serial Programming) header that allows you to program the Arduino Pro Micro directly on the board, including burning the bootloader if needed.
+
+#### Method 1: USB Programming (Recommended)
+
+If your Arduino Pro Micro already has a bootloader:
+
+1. Connect the PCB to your computer via USB
+2. Follow the firmware upload instructions in the main documentation
+
+#### Method 2: ICSP Programming (For New/Corrupted Bootloaders)
+
+If your Arduino Pro Micro doesn't have a bootloader or it's corrupted, you can use an Arduino Uno as an ISP programmer:
 
 **What You'll Need:**
-- Arduino Pro Micro (16MHz/5V version)
-- 10kΩ resistor (for the mode switch pullup)
-- Toggle switch (SPDT works great)
-- WS2812 LED (optional, but helpful for status feedback)
-- Breadboard and jumper wires / soldering iron and wire
+- Arduino Uno (as ISP programmer)
+- 6 jumper wires
+- The custom PCB with Arduino Pro Micro installed
 
-**Wiring It Up:**
-
-![Wiring Diagram](assets/ProMicroImplementation.fzpz_bb.png)
-
-### Option 2: Custom PCB
-
-The custom PCB includes everything you need in a compact package.
-
-![PCB Schematic](PCB/SCH_RC-Gamepad-Dongle%20V0.1_1-P1_2025-11-13.png)
-
-**PCB Features:**
-- Hardware SBUS signal inverter
-- Proper RC connectors for clean wiring
-- Status LED
-
-**Design Files (in `PCB/` folder):**
-- **[Gerber files](PCB/Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip)**: Ready to upload to any PCB manufacturer
-- **[Schematic](PCB/SCH_RC-Gamepad-Dongle%20V0.1_2025-11-13.pdf)**: Complete circuit diagram (PDF format)
-- **[BOM](PCB/BOM_RC-Gamepad-Dongle%20V0.1_RC-Gamepad-Dongle%20V0.1_2025-11-13.xlsx)**: Full parts list with quantities
-- **[DXF file](PCB/DXF_RC-Gamepad-Dongle%20V0.1_2025-11-13_AutoCAD2007.dxf)**: Mechanical dimensions for enclosure design
-
-**Getting PCBs Made:**
-1. Upload the [Gerber ZIP file](PCB/Gerber_RC-Gamepad-Dongle_V0.1_2025-11-13.zip) to your PCB manufacturer (JLCPCB, PCBWay, OSH Park, etc.)
-2. Order the parts from the BOM spreadsheet
-3. Solder the components yourself, or use a PCBA service
-
-## Uploading Firmware
-
-Make sure you have PlatformIO installed, then:
-
-```bash
-cd hardware/
-pio run --target upload
+**ICSP Header Pinout:**
 ```
+ICSP Header on PCB:
+┌─────┬─────┐
+│ MISO│ VCC │  1: MISO  2: VCC (5V)
+├─────┼─────┤
+│ SCK │ MOSI│  3: SCK   4: MOSI  
+├─────┼─────┤
+│ RST │ GND │  5: RST   6: GND
+└─────┴─────┘
+```
+
+**Wiring Connections:**
+| Arduino Uno | ICSP Header | Wire Color (Suggested) |
+|-------------|-------------|------------------------|
+| Pin 10      | RST (5)     | Orange                |
+| Pin 11      | MOSI (4)    | Blue                  |
+| Pin 12      | MISO (1)    | Green                 |
+| Pin 13      | SCK (3)     | Yellow                |
+| 5V          | VCC (2)     | Red                   |
+| GND         | GND (6)     | Black                 |
+
+**Steps:**
+
+1. **Prepare the Arduino Uno as ISP:**
+   ```bash
+   # Open Arduino IDE
+   # File → Examples → 11.ArduinoISP → ArduinoISP
+   # Select Arduino Uno board and port
+   # Upload the ArduinoISP sketch
+   ```
+
+2. **Connect the wires** according to the table above
+
+3. **Install SparkFun Pro Micro board support** (if not already installed):
+   ```
+   # In Arduino IDE:
+   # File → Preferences
+   # Add to Additional Board Manager URLs:
+   # https://raw.githubusercontent.com/sparkfun/Arduino_Boards/main/IDE_Board_Manager/package_sparkfun_index.json
+   # Tools → Board → Boards Manager
+   # Search "SparkFun AVR Boards" and install
+   ```
+
+4. **Burn the bootloader:**
+   ```bash
+   # In Arduino IDE:
+   # Tools → Board → SparkFun Pro Micro
+   # Tools → Processor → ATmega32U4 (5V, 16MHz)
+   # Tools → Programmer → Arduino as ISP
+   # Tools → Burn Bootloader
+   ```
+
+5. **Verify bootloader installation:**
+   - Disconnect ICSP wires
+   - Connect USB cable to the PCB
+   - The Pro Micro should enumerate as a USB device
+   - You can now upload firmware normally via USB
+
+**Troubleshooting ICSP Programming:**
+
+- **"Device signature = 0x000000"**: Check all wiring connections, ensure power is connected
+- **"avrdude: stk500_recv(): programmer is not responding"**: Verify ArduinoISP sketch is uploaded to Uno
+- **"avrdude: verification error"**: Try adding a 10μF capacitor between RESET and GND on the Arduino Uno
+- **Board not detected after bootloader burn**: Try pressing the reset button twice quickly to enter bootloader mode
+
+## Breadboard Alternative
+
+For prototyping or one-off builds, you can build on a breadboard using the Fritzing diagrams in `../assets/fritzing/`.
+
+### Breadboard Parts
+- Arduino Pro Micro (16MHz/5V)
+- 10kΩ resistor
+- SPDT toggle switch  
+- WS2812 LED (optional)
+- Breadboard and jumper wires
+
+### Connections
+- **Pin 0 (RX)**: RC receiver signal
+- **Pin 3**: Mode switch (with 10kΩ pulldown to ground)
+- **Pin 5**: WS2812 LED data line
+- **GND/VCC**: Power connections
+
+See wiring diagrams: `../assets/images/ProMicroImplementation.fzpz_bb.png`
+
+## SBUS Considerations
+
+SBUS uses an inverted serial signal that requires hardware inversion:
+
+- **PCB build**: Inverter is built into the PCB
+- **Breadboard build**: You'll need to add an external inverter circuit or use a different protocol
+
+## Troubleshooting
+
+### Common Issues
+
+**No RC signal detected:**
+- Check receiver is bound and powered
+- Verify correct protocol selected in configurator
+- Ensure signal wire connected to Pin 0
+
+**SBUS not working on breadboard:**
+- SBUS requires hardware signal inversion
+- Use the PCB design or add inverter circuit
+- Alternative: use IBUS or PPM instead
+
+**Status LED not working:**
+- Check LED power (3.3V-5V)
+- Verify data line connected to Pin 5
+- Ensure correct LED type (WS2812/WS2812B)
+
+**Computer not recognizing the dongle:**
+- Verify your Arduino Pro Micro is functioning (should show up as a COM port)
+- Try a different USB cable
+- Check that the firmware uploaded successfully
+- If bootloader is corrupted, use ICSP programming method above
+
+**Firmware upload fails:**
+- Check that the correct board is selected (SparkFun Pro Micro)
+- Verify the correct processor (ATmega32U4 5V, 16MHz)
+- Try pressing reset button twice quickly before upload
+- If bootloader is missing/corrupted, burn bootloader using ICSP method
+
+For more troubleshooting, see the main project README.
 
 ## Supported RC Protocols
 
@@ -62,88 +215,4 @@ pio run --target upload
 | **DSM2** | ⚠️ Untested | 115200 | Spektrum DSM2 |
 | **FPORT** | ⚠️ Untested | 115200 | FrSky F.Port |
 
-**Note:** Only IBUS and PPM have been verified with actual hardware. The other protocols are implemented according to their specs but need testing. If you try one, let us know how it goes!
-
-**Important:** Only connect one receiver at a time to avoid signal conflicts.
-
-## RC Protocol Connections
-
-### For Breadboard Builds
-- **IBUS/PPM/CRSF/DSM/FPORT**: Connect directly to Pin 0 (RX)
-- **SBUS**: Requires a hardware inverter circuit (see PCB design for reference)
-
-### For PCB Builds
-- **IBUS/PPM/CRSF/DSM/FPORT**: Use the IBUS port
-- **SBUS**: Use the SBUS port
-
-## Status LED Guide
-
-If you added the WS2812 LED, here's what the colors mean:
-
-| Color | Pattern | What It Means |
-|-------|---------|---------------|
-| **Blue** | Solid | Configuration mode is active |
-| **Green** | Solid | Joystick mode, receiving RC data |
-| **Dim Green** | Solid | Joystick mode, waiting for RC data |
-| **Red** | Flashing | Error - check your connections |
-| **Yellow** | Flashing | Saving configuration to memory |
-
-## Joystick Controls
-
-The dongle can emulate a full-featured USB joystick with:
-
-**Analog Axes:**
-- X, Y, Z axes
-- Rx, Ry, Rz axes
-- Rudder, Throttle, Accelerator, Brake, Steering
-
-**Digital Controls:**
-- 32 individual buttons
-- 2 hat switches (8-direction controls)
-
-You can map any RC channel (1-16) to any control, or leave controls unmapped if you don't need them.
-
-## Troubleshooting
-
-**LED not working?**
-- Check the WS2812 wiring and power connections
-- Make sure the LED data pin is connected to pin 5
-
-**Computer not recognizing the dongle?**
-- Verify your Arduino Pro Micro is functioning (should show up as a COM port)
-- Try a different USB cable
-- Check that the firmware uploaded successfully
-
-**No RC data coming through?**
-- Make sure your receiver is bound to your transmitter
-- Check the protocol setting in the configurator matches your receiver
-- Verify the receiver data wire is connected to pin 0
-- For SBUS on breadboard, you need a hardware inverter
-
-**SBUS not working on breadboard?**
-- SBUS uses an inverted signal that needs hardware inversion
-- Use the PCB design which has the inverter built-in, or add an inverter to your breadboard
-
-## Files in This Folder
-
-**Fritzing Diagrams (`assets/` folder):**
-- `ProMicroImplementation.fzpz.fzz` - Editable Fritzing project file
-- `ProMicroImplementation.fzpz_bb.png` - Breadboard wiring diagram
-- `ProMicroImplementation2.fzpz_bb.png` - Alternative wiring view
-
-**PCB Design (`PCB/` folder):**
-- Gerber files for PCB manufacturing
-- Schematic PDF
-- Bill of materials spreadsheet
-- Mechanical DXF drawings
-
-**Firmware (`src/` folder):**
-- `main.cpp` - Arduino firmware source code
-
-## Need Help?
-
-Check the main project README for more information, or open an issue on the GitHub repository if you run into problems.
-
-## License
-
-MIT License - see the main project for details.
+**Note:** Only IBUS and PPM have been verified with actual hardware. The other protocols are implemented according to their specs but need testing.

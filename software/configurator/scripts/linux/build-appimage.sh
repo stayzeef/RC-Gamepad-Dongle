@@ -111,8 +111,8 @@ echo "🔨 Building AppImage..."
 "$TOOLS_DIR/linuxdeploy-x86_64.AppImage" \
     --appdir="$APPDIR" \
     --executable="$APPDIR/rc-gamepad-dongle" \
-    --desktop-file=assets/rc-gamepad-dongle.desktop \
-    --icon-file=assets/logo_512.png \
+    --desktop-file=../../../assets/desktop/rc-gamepad-dongle.desktop \
+    --icon-file=../../../assets/images/logo_512.png \
     --output=appimage
 
 # Check if AppImage was created

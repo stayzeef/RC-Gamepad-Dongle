@@ -5,8 +5,8 @@ import os
 block_cipher = None
 
 # Get absolute path to icon file using SPECPATH (directory containing this spec file)
-icon_path = os.path.abspath(os.path.join(SPECPATH, '..', 'assets', 'logo.ico'))
-logo_png_path = os.path.abspath(os.path.join(SPECPATH, '..', 'assets', 'logo_512.png'))
+icon_path = os.path.abspath(os.path.join(SPECPATH, '..', '..', '..', 'assets', 'images', 'logo.ico'))
+logo_png_path = os.path.abspath(os.path.join(SPECPATH, '..', '..', '..', 'assets', 'images', 'logo_512.png'))
 print(f"Icon path: {icon_path}")
 print(f"Icon exists: {os.path.exists(icon_path)}")
 print(f"Logo PNG path: {logo_png_path}")

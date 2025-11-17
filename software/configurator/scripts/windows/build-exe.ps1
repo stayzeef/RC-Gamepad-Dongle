@@ -43,9 +43,9 @@ Write-Host "Installing/Updating dependencies..." -ForegroundColor Yellow
 Write-Host "Dependencies installed" -ForegroundColor Green
 
 # Convert logo to ICO format if it doesn't exist
-if (-not (Test-Path "assets\logo.ico")) {
+if (-not (Test-Path "..\..\..\assets\images\logo.ico")) {
     Write-Host "Converting logo to ICO format..." -ForegroundColor Yellow
-    $pythonCode = "from PIL import Image; img = Image.open('assets/logo_512.png'); img.save('assets/logo.ico', format='ICO', sizes=[(256,256), (128,128), (64,64), (48,48), (32,32), (16,16)])"
+    $pythonCode = "from PIL import Image; img = Image.open('../../../assets/images/logo_512.png'); img.save('../../../assets/images/logo.ico', format='ICO', sizes=[(256,256), (128,128), (64,64), (48,48), (32,32), (16,16)])"
     & .\.venv\Scripts\python.exe -c $pythonCode
     Write-Host "Logo converted to ICO" -ForegroundColor Green
 } else {
@@ -122,7 +122,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='../assets/logo.ico',
+    icon='../../assets/images/logo.ico',
 )
 '@
     Set-Content -Path $specFile -Value $specContent

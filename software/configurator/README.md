@@ -1,6 +1,6 @@
 # RC Gamepad Dongle Configurator
 
-![RC Gamepad Configurator](assets/logo.png)
+![RC Gamepad Configurator](../../assets/images/logo.png)
 
 This is the desktop app that lets you configure your RC Gamepad Dongle. It handles all the channel mapping and protocol settings through a simple interface, so you don't need to mess with code or config files.
 
@@ -13,6 +13,34 @@ The configurator connects to your dongle over USB and lets you:
 - Load and backup your settings
 
 Works on both Windows and Linux.
+
+### Interface Overview
+
+![General Configuration](../../assets/images/screenshots/configurator-general.png)
+*General tab: Select your RC protocol and configure basic settings*
+
+![Axes Configuration](../../assets/images/screenshots/configurator-axes.png)
+*Axes tab: Map RC channels to joystick axes with real-time preview*
+
+## Quick Start
+
+### Windows
+1. Download the latest `.exe` file from releases
+2. Run the executable - no installation needed
+
+### Linux  
+1. Download the latest `.AppImage` file from releases
+2. Make it executable: `chmod +x RC_Gamepad_Configurator-x86_64.AppImage`
+3. Run: `./RC_Gamepad_Configurator-x86_64.AppImage`
+
+### Running from Source
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cd src
+python rc-gamepad-dongle.py
+```
 
 ## Building the App
 
@@ -43,12 +71,12 @@ Want to modify the configurator or run it from source? Here's what you need:
 pip install -r requirements.txt
 ```
 
-### Running from Source
-```bash
-cd src
-python rc-gamepad-dongle.py
-```
+## Configuration Files
+
+The configurator uses these key files:
+- **`../../assets/default.json`** - Default channel mappings
+- **`assets/`** - UI assets (moved to `../../assets/`)
 
 ## More Info
 
-Check out [scripts/README.md](scripts/README.md) for more detailed build instructions and troubleshooting tips.
+Check the main project documentation in `../../docs/` for complete setup instructions.
